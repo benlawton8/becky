@@ -23,15 +23,27 @@ Your designer gets a month of your content in one place - ranked, transcribed, r
 ## Before you start - you need 2 things
 
 1. Claude Code installed on your computer. (If you're reading this in Claude Code, you've got it.)
-2. An Instagram business or creator account. (A personal account won't work - switch it in the Instagram app under Settings, then Account type.)
+2. An Instagram account with reels on it. Business, Creator, or a public personal account - Becky can read any of them. She'll sort out how during setup.
+
+---
+
+## How Becky reaches your Instagram
+
+Becky needs a way to read your live reels. There are three ways in, and Becky picks the best one for you during setup. You don't have to choose now - this is just so you know what's coming.
+
+- **Pipeboard** - easiest. Works if your Instagram is a Business or Creator account linked to a Facebook Page. Free.
+- **Apify** - works on ANY public Instagram account, even a personal one. You make a free Apify account and paste in a key.
+- **Instagram Graph API** - the official route. A bit more setup. Becky walks you through it if you want it.
+
+Becky tries Pipeboard first, then Apify, then Graph API. She tells you which one she's using and why.
 
 ---
 
 ## Setup - 3 steps, about 10 minutes
 
-### Step 1 - Get Pipeboard
+### Step 1 - Get Pipeboard (the easy path)
 
-Becky reads your Instagram through a tool called Pipeboard. Think of it as the phone line between Becky and your Instagram.
+Becky's easiest way in is a tool called Pipeboard.
 
 1. Go to pipeboard.co
 2. Make an account. The free plan is fine to start.
@@ -45,6 +57,8 @@ claude mcp add --transport http pipeboard-meta-ads https://meta-ads.mcp.pipeboar
 ```
 
 A window pops up to log in with Facebook. Say yes. Done.
+
+(If Pipeboard can't see your account, no problem - Becky will set you up with Apify instead during her first run.)
 
 ### Step 3 - Drop Becky in
 
