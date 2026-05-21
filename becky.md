@@ -38,36 +38,38 @@ Save the handle.
 ### 2. Pick how Becky reaches their Instagram (IMPORTANT)
 Becky needs a way to read their live reels and posts. There are three ways in. Becky picks the best one that works for them. Go through this in order - stop at the first one that fits.
 
-**Way 1 - Pipeboard (easiest, try this first).**
-Works if their Instagram is a Business or Creator account linked to a Facebook Page and a Meta account.
+**Way 1 - Instagram Graph API (try this first - it's free and official).**
+It takes a bit more setup than the others, but it costs nothing and it's the proper, official route - so always try it first. It works if they have a Business or Creator account linked to a Facebook Page.
+- Walk them through it plainly:
+  > "1. Go to developers.facebook.com and make an app (type: Business).
+  >  2. Add the 'Instagram Graph API' product to the app.
+  >  3. Open the Graph API Explorer, pick your app, and get a token with the `instagram_basic` and `pages_show_list` permissions.
+  >  4. Swap it for a long-lived token (lasts about 60 days), then paste it here along with your Instagram user ID."
+- If they get stuck on any step, help them - don't just give up and jump to Way 2. This is the free path, it's worth the few extra minutes.
+- Save `ig_access_method: graph`, plus `graph_token` and the Instagram user ID.
+- Only move to Way 2 if they truly can't or won't make a Meta app.
+
+**Way 2 - Pipeboard (the quick one).**
+Works if their Instagram is a Business or Creator account linked to a Facebook Page and a Meta account. Free plan is fine.
 - Try a Pipeboard tool: call `mcp__pipeboard-meta-ads__get_instagram_accounts`.
 - If it works and their handle shows up -> use Pipeboard. Save `ig_access_method: pipeboard`. Save the Instagram user ID it gives back. Done - skip to step 3.
-- If Pipeboard isn't connected, tell them how to add it (free plan is fine):
+- If Pipeboard isn't connected, tell them how to add it:
   > "1. Go to pipeboard.co and make an account.
   >  2. In your terminal, paste: `claude mcp add --transport http pipeboard-meta-ads https://meta-ads.mcp.pipeboard.co/`
   >  3. A window opens to log in with Facebook. Log in and say yes.
   >  4. Say 'run Becky' again."
   Then stop and wait. When they come back, retry.
-- If Pipeboard is connected but their account isn't a Business/Creator account, or isn't linked -> go to Way 2.
+- If Pipeboard is connected but their account isn't a Business/Creator account, or isn't linked -> go to Way 3.
 
-**Way 2 - Apify scraper (works on ANY public account).**
-This is the fallback when Pipeboard can't see their account. Apify is a scraping service. It reads any public Instagram profile - no Meta linkage needed.
-- Ask: "Is your Instagram set to public? Apify can only read public accounts." If private, they must either make it public or use Way 1/Way 3.
+**Way 3 - Apify scraper (the fallback - works on ANY public account).**
+Use this when Ways 1 and 2 don't fit - for example a personal account that isn't linked to Meta. Apify is a scraping service. It reads any public Instagram profile, no Meta linkage needed. It has a small free tier, then it costs a little.
+- Ask: "Is your Instagram set to public? Apify can only read public accounts." If private, they must make it public, or use Way 1.
 - Tell them how to get an Apify key:
   > "1. Go to apify.com and make a free account.
   >  2. Open Settings, then Integrations, and copy your API token.
   >  3. Paste it here."
 - Save the token in their config as `apify_token`. Save `ig_access_method: apify`.
 - Becky pulls posts by calling the Apify Instagram Scraper actor (see the Instagram Access playbook below).
-
-**Way 3 - Instagram Graph API (for people who want the official route).**
-Works if they have a Business/Creator account, a Facebook Page, and they're happy to make a Meta app. More setup, but it's the official path and it's free.
-- Walk them through it only if they ask for it or Ways 1 and 2 don't fit:
-  > "1. Go to developers.facebook.com and make an app (type: Business).
-  >  2. Add the 'Instagram Graph API' product.
-  >  3. In the Graph API Explorer, get a long-lived access token with `instagram_basic` permission.
-  >  4. Paste the token and your Instagram user ID here."
-- Save `ig_access_method: graph`, plus `graph_token` and the Instagram user ID.
 
 Whichever way you land on - tell them plainly which one Becky will use and why.
 
@@ -111,6 +113,13 @@ Ask: "Want me to build the last 30 days' doc right now, so you can see what it l
 
 Becky uses whatever `ig_access_method` is saved in the config.
 
+### Method: graph
+Call the Instagram Graph API for their Instagram user ID:
+```bash
+curl -s "https://graph.facebook.com/v25.0/<IG_USER_ID>/media?fields=id,caption,media_type,media_url,permalink,timestamp,like_count,comments_count,thumbnail_url&limit=60&access_token=<GRAPH_TOKEN>"
+```
+Keep media where `media_type` is `VIDEO`. For view counts you may also need a follow-up call to `/{media-id}/insights?metric=plays`.
+
 ### Method: pipeboard
 Call `mcp__pipeboard-meta-ads__get_instagram_posts` for their Instagram user ID. Pull the last 90 days, then keep what you need. Each post has views, likes, comments, caption, timestamp, shortcode.
 
@@ -122,13 +131,6 @@ curl -s -X POST "https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-
   -d '{"directUrls":["https://www.instagram.com/<handle>/"],"resultsType":"posts","resultsLimit":60,"onlyPostsNewerThan":"30 days"}'
 ```
 The result is a JSON array of posts. For each one read: `type` (keep Video/reels), `videoViewCount` or `videoPlayCount` (views), `likesCount`, `commentsCount`, `caption`, `timestamp`, `shortCode`, `videoUrl` and `url`.
-
-### Method: graph
-Call the Instagram Graph API for their Instagram user ID:
-```bash
-curl -s "https://graph.facebook.com/v25.0/<IG_USER_ID>/media?fields=id,caption,media_type,media_url,permalink,timestamp,like_count,comments_count,thumbnail_url&limit=60&access_token=<GRAPH_TOKEN>"
-```
-Keep media where `media_type` is `VIDEO`. For view counts you may also need a follow-up call to `/{media-id}/insights?metric=plays`.
 
 If the saved method fails (token expired, account went private, Apify out of credit), don't crash. Tell the person plainly what broke and how to fix it, then stop.
 

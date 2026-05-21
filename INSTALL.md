@@ -31,11 +31,11 @@ Your designer gets a month of your content in one place - ranked, transcribed, r
 
 Becky needs a way to read your live reels. There are three ways in, and Becky picks the best one for you during setup. You don't have to choose now - this is just so you know what's coming.
 
-- **Pipeboard** - easiest. Works if your Instagram is a Business or Creator account linked to a Facebook Page. Free.
-- **Apify** - works on ANY public Instagram account, even a personal one. You make a free Apify account and paste in a key.
-- **Instagram Graph API** - the official route. A bit more setup. Becky walks you through it if you want it.
+- **Instagram Graph API** - free and official. A bit more setup, but it costs nothing. Becky tries this first and walks you through it.
+- **Pipeboard** - quick to set up. Works if your Instagram is a Business or Creator account linked to a Facebook Page. Free plan is fine.
+- **Apify** - the fallback. Works on ANY public Instagram account, even a personal one. Small free tier, then a small cost.
 
-Becky tries Pipeboard first, then Apify, then Graph API. She tells you which one she's using and why.
+Becky tries the Graph API first because it's free and official, then Pipeboard, then Apify. She tells you which one she's using and why.
 
 ---
 
